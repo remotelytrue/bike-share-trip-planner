@@ -73,7 +73,7 @@ def get_points(start_lat, start_lon, end_lat, end_lon, station_info, features):
   to_plot_end = []
   for i, row in station_info.iterrows():
     if row['statusValue'] == 'In Service':
-      if abs(row['latitude']-start_lat) < 0.007 and abs(row['longitude']-start_lon) < 0.007:
+      if abs(row['latitude']-start_lat) < 0.005 and abs(row['longitude']-start_lon) < 0.005:
         new_row = {}
         new_row['latitude'] = row['latitude']
         new_row['longitude'] = row['longitude']
@@ -87,7 +87,7 @@ def get_points(start_lat, start_lon, end_lat, end_lon, station_info, features):
                                                                  row['totalDocks'], features)
         to_plot_start.append(new_row)
       
-      if abs(row['latitude']-end_lat) < 0.007 and abs(row['longitude']-end_lon) < 0.007:
+      if abs(row['latitude']-end_lat) < 0.005 and abs(row['longitude']-end_lon) < 0.005:
         new_row = {}
         new_row['latitude'] = row['latitude']
         new_row['longitude'] = row['longitude']
@@ -111,7 +111,7 @@ def get_map(station_info, features, start_point, end_point, city = 'New York, NY
   start_lat, start_lon = get_google_info(start_point+', '+city)
   end_lat, end_lon = get_google_info(end_point+', '+city)
 
-  map1_options = GMapOptions(lat=start_lat, lng=start_lon, map_type="roadmap", zoom=15)
+  map1_options = GMapOptions(lat=start_lat, lng=start_lon, map_type="roadmap", zoom=16)
   plot1 = GMapPlot(
       x_range=DataRange1d(), y_range=DataRange1d(), 
       map_options=map1_options, 
@@ -121,7 +121,7 @@ def get_map(station_info, features, start_point, end_point, city = 'New York, NY
   plot1.plot_width = 500
   plot1.plot_height = 500
 
-  map2_options = GMapOptions(lat=end_lat, lng=end_lon, map_type="roadmap", zoom=15)
+  map2_options = GMapOptions(lat=end_lat, lng=end_lon, map_type="roadmap", zoom=16)
   plot2 = GMapPlot(
       x_range=DataRange1d(), y_range=DataRange1d(), 
       map_options=map2_options, 
@@ -140,7 +140,7 @@ def get_map(station_info, features, start_point, end_point, city = 'New York, NY
            data=dict(
             lat=[row['latitude']],
             lon=[row['longitude']],
-            lon_txt = [row['longitude']+0.0005],
+            lon_txt = [row['longitude']+0.0003],
             bike_text=[str(row['0 min'])],
             )
            )
@@ -161,7 +161,7 @@ def get_map(station_info, features, start_point, end_point, city = 'New York, NY
            data=dict(
             lat=[row['latitude']],
             lon=[row['longitude']],
-            lon_txt = [row['longitude']+0.0005],
+            lon_txt = [row['longitude']+0.0003],
             dock_text=[str(row['0 min'])],
             )
            )
