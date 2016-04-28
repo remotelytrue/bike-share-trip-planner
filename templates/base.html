@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+    <title>Bike share trip planner{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta charset="utf-8">
+
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    {% endblock %}
+  </head>
+  <body>
+    {% block navbar %}
+    <div class="navbar navbar-static-top navbar-default">
+      <div class="container">
+        <button class="navbar-toggle">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">Bike Share Trip Planner</a>
+        <div class="nav-collapse">
+          {% block navbar_right %}
+          <ul class="nav navbar-nav pull-right">
+            <!-- more specific things here-->
+            <!--{% if not session.logged_in %}-->
+            <li><a href="index">Home</a></li>
+            <li><a href="data">Data</a></li>
+            <li><a href="station_map">Station Maps</a></li>
+            <!--{% else %}-->
+            <!--{% endif %}-->
+          </ul>
+          {% endblock %}
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+    {% endblock %}
+    <div class="container page">
+        <div class="content">
+          {% block content %}
+          {% endblock %}
+        </div>
+        <hr>
+        {% block footer %}
+        <footer class="footer">
+            <p>&copy; Phillip Steindel</p>
+        </footer>
+        {% endblock %}
+    </div>
+    {% block js_footer %}
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+      <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    {% endblock %}
+  </body>
+</html>

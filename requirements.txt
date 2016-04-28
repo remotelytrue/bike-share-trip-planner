@@ -1,0 +1,8 @@
+dill==0.2.4
+Flask==0.10.1
+gunicorn==19.3.0
+oauth==1.0.1
+oauthlib==0.7.2
+requests>=2.2.1 
+python-dateutil
+noaa==0.2.1
