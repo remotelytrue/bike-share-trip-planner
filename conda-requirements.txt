@@ -1,5 +1,5 @@
-nomkl
-numpy==1.10.4
-pandas==0.17.1
-bokeh==0.10.0
-scipy==0.16.1
+nomkl=1.0=0
+bokeh=0.10.0=py27_0
+numpy=1.10.4=py27_nomkl_0
+scikit-learn=0.16.1=np110py27_0
+scipy=0.16.1=np110py27_nomkl_1
