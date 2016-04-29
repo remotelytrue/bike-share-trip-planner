@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect
-from work import get_current_station_data, predict, get_current_info
+from work import get_current_station_data, get_current_info
 from datetime import datetime
 import pandas
 
@@ -52,4 +52,5 @@ def show_data_center():
 def error():
   return render_template('error.html')
 
-app.run(port=3357) 
+if __name__ == '__main__':
+  app.run(port=3357) 
