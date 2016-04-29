@@ -12,19 +12,24 @@
   <body>
     <div>
       <h1>Credits</h1>
-      <p>I analyzed Citibike and NOAA weather data and built predictive models using tools from Python, SciPy, and scikit-learn. The website was built with Flask, using tools from Google and Bokeh, and hosted on Heroku. Source code for the website is <a href="github.com">here.</a></p>
-      <!-- citibike, python, scipy, sklearn, flask, google, bokeh, heroku, github-->
+      <p>I analyzed Citi Bike and NOAA weather data and built predictive models using tools from Python, SciPy, and scikit-learn. The website was built with Flask, using tools from Google and Bokeh, and hosted on Heroku. Source code for the website is <a href="https://github.com/remotelytrue/bike-share-trip-planner.git">here.</a></p>
+          <img src="/static/python-powered-w-200x80.png" alt="python">
+          <img src="/static/scikit-learn-logo-small.png" alt="sklearn" height = "80">
+          <img src="/static/Flask.png" alt="flask" height = "80">
+          <img src="/static/bokeh_logo.png" alt="bokeh" height = "80">
+          <img src="/static/Octocat.png" alt="github" height = "80">
+
       <h1>Data analysis and predictions</h1>
-      <p>I downloaded data from the  <a href="https://s3.amazonaws.com/tripdata/index.html">citibike website</a> for all rides from July 2013 to March 2016. For each ride, time of day, start station, and end station are listed. I grouped data for every station into 15 minute intervals; here's a subset of that data for one station (72) <!--whatever 72 is-->, showing checkins and checkouts</p>
-      <!-- checkins and checkouts for 72 -->
+      <p>I downloaded data from the <a href="https://s3.amazonaws.com/tripdata/index.html">citibike website</a> for all rides from July 2013 to March 2016. For each ride, time of day, start station, and end station are listed. I grouped data for every station into 15 minute intervals; here's a some data from late March 2016 for one station (W 52 St and 11 Ave), showing checkins and checkouts</p>
+      <img src="/static/checkin_out.png" alt="checkin_out" width='700'>
       <p>Subtracting checkouts from checkins gives the 'flux,' that is, how many net bikes are coming into (if positive) or leaving (if negative) the station.</p>
-      <!-- flux for 72 -->
+      <img src="/static/flux.png" alt="flux" width='700'>
       <p>To predict the flux, I constructed two <a href="https://en.wikipedia.org/wiki/Gradient_boosting">Gradient Boosting Trees</a> for checkins and checkouts for each station; one that predicts the 75th percentile of checkouts/ins per 15 minutes (a 'lower bound' on checkouts/ins) and one that predicts the 99th percentile (an 'upper bound'). NB: The below models were only trained on data through February 2016, but the website uses models trained on data through March.</p>
-      <!-- predicted stuff-->
-      <p>These models use several parameters for predicting; in order of importance they are the the hour of the day, daily high temperature, presence of light precipitation, presence of heavy precipitation, whether it's a weekday, whether it's a holiday, the day of the year, and the total days since system launch. 'Importance' is measured by how often that parameter was used in making a decision in a tree. For all the models, the average importances are as follows:</p> 
-      <!-- feature importance-->
-      <p>I want to slightly overestimate the rate of bikes going in or going out (I don't want to send you to an empty station!), so for predicting how many bikes will be left at the station I calculate flux by subtracting the upper bound of checkouts from the lower bound of checkins; this is reversed for predicting how many docks will be left.</p>
-      <!-- predicted flux -->
+      <img src="/static/pred_checkin_out.png" alt="pred_checkin_out" width='700'>
+      <p>These models use several features for predicting; in (rough) order of importance they are the the hour of the day, daily high temperature, total operating days, day of the year, whether it's a weekday, presence of light precipitation, presence of heavy precipitation,  and whether it's a holiday. 'Importance' is measured by how often that feature was used in making a decision in a tree. For the 'upper bound' models, the average importances are as follows (error bars are standard deviations):</p> 
+      <img src="/static/feature_importance.png" alt="feature_importance" width='700'>
+      <p>I want to slightly overestimate the rate of bikes going in or going out (I don't want to send you to an empty station!), so to predict how many bikes will be left at the station I calculate flux by subtracting the upper bound of checkouts from the lower bound of checkins; this is reversed for predicting how many docks will be left.</p>
+      <img src="/static/pred_flux.png" alt="pred_flux" width='700'>
       <p>Given this flux and the current amount of bikes/docks, it is easy to predict in the short term how many bikes/docks will be left. I'm currently recommending the closest station that will have bikes after 20 minutes for the starting station, and closest station to the desired end point that will have docks after 60 minutes for the ending station. I'm working on incorporating predicted travel times to refine recommendations further.</p>
       <!-- number of bikes/flux -->
     </div>
