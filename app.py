@@ -52,5 +52,4 @@ def show_data_center():
 def error():
   return render_template('error.html')
 
-if __name__ == '__main__':
-  app.run(port=3357) 
+app.run(port=3357) 
