@@ -28,25 +28,25 @@ def index():
     app.end_point = request.form['end_point']
     app.have_locs = True
     #app.time = request.form['time'] maybe...
-    return redirect('/station_map')
+    return redirect('/recommendations')
 
-@app.route('/station_map')
+@app.route('/recommendations')
 def station_map():
   if not app.have_locs:
     return redirect('/index')
   else:
-    start_string, end_string, (script, div) = get_current_station_data.get_map(app.station_info, 
+    start_info, end_info, (script, div) = get_current_station_data.get_map(app.station_info, 
                                                    app.features, app.start_point, app.end_point)
-    return render_template('station_map.html', start_string = start_string,
-                           end_string = end_string, script=script, div=div)
+    return render_template('station_map.html', start_info = start_info,
+                           end_info = end_info, script=script, div=div)
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
 
-@app.route('/data')
+@app.route('/methodology')
 def show_data_center():
-  return render_template('Week_6_Figures.slides.html')
+  return render_template('methodology.html')
 
 @app.route('/error')
 def error():

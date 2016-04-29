@@ -150,11 +150,13 @@ def get_map(station_info, features, start_point, end_point, city = 'New York, NY
     plot1.add_glyph(source, circle)
     plot1.add_glyph(source, bike_text_glyph)
     if row['color'] == 'black':
-      start_string = 'Recommended start station: '+row['station_name']+'. '
-      start_string += 'In 5 minutes, I predict there will be '+str(row['5 min'])+' bikes; '
-      start_string += '10 minutes, '+str(row['10 min'])+' bikes; '
-      start_string += '15 minutes, '+str(row['15 min'])+' bikes; and '
-      start_string += '20 minutes, '+str(row['20 min'])+' bikes.'
+      start_info = {}
+      start_info['name'] = row['station_name']
+      start_info['0 min'] = str(row['0 min'])
+      start_info['5 min'] = str(row['5 min'])
+      start_info['10 min'] = str(row['10 min'])
+      start_info['15 min'] = str(row['15 min'])
+      start_info['20 min'] = str(row['20 min'])
 
   for row in to_plot_end_sorted_picked:    
     source = ColumnDataSource(
@@ -171,25 +173,39 @@ def get_map(station_info, features, start_point, end_point, city = 'New York, NY
     plot2.add_glyph(source, circle)
     plot2.add_glyph(source, dock_text_glyph)
     if row['color'] == 'black':
-      end_string = 'Recommended end station: '+row['station_name']+'. '
-      end_string += 'In 30 minutes, I predict there will be '+str(row['30 min'])+' docks; '
-      end_string += '45 minutes, '+str(row['45 min'])+' docks; and '
-      end_string += '60 minutes, '+str(row['60 min'])+' docks.'
+      end_info = {}
+      end_info['name'] = row['station_name']
+      end_info['0 min'] = str(row['0 min'])
+      end_info['30 min'] = str(row['30 min'])
+      end_info['45 min'] = str(row['45 min'])
+      end_info['60 min'] = str(row['60 min'])
 
-  plot1.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool())
-  plot2.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool())
+  plot1.add_tools(PanTool(), WheelZoomTool())
+  plot2.add_tools(PanTool(), WheelZoomTool())
 
   p = gridplot([[plot1, plot2]])
-  if not to_plot_start_sorted_picked:
-    start_string = 'No stations near your start point!'
-  elif not start_string:
-    start_string = 'No nearby stations have bikes!'
-  if not to_plot_end_sorted_picked:
-    end_string = 'No stations near your end point!'
-  elif not end_string:
-    end_string = 'No nearby stations have bikes at your end point!'
-  return start_string, end_string, components(p)
-  return components(p)
+  
+  if not start_info:
+    start_info = {}
+    if not to_plot_start_sorted_picked:
+      start_info['name'] = 'No stations near your start point!'
+    else:
+      start_info['name'] = 'No stations near you have bikes!'
+    start_info['0 min'] = 'N/A'
+    start_info['5 min'] = 'N/A'
+    start_info['10 min'] = 'N/A'
+    start_info['15 min'] = 'N/A'
+  if not end_info:
+    end_info = {}
+    if not to_plot_end_sorted_picked:
+      end_info['name'] = 'No stations near your end point!'
+    else:
+      end_info['name'] = 'No stations have bikes at your end point!'
+    end_info['30 min'] = 'N/A'
+    end_info['45 min'] = 'N/A'
+    end_info['60 min'] = 'N/A'
+  
+  return start_info, end_info, components(p)
 
 
 

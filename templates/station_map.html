@@ -16,8 +16,10 @@
   </head>
   <body>
     <div>
-        <p>{{ start_string }}</p>
-        <p>{{ end_string }}</p>
+        <p>Here are the start and end locations you requested, along with recommended stations in <b>black</b>. Other stations, with the current amount of bikes/docks, are shown in <font color='red'><b>red</b></font>.
+        <p>Recommended start station: <b>{{ start_info['name'] }}</b><br>  There are currently <b>{{ start_info['0 min'] }} bikes</b> there. In 5 minutes, I predict there will be <b>{{ start_info['5 min'] }} bikes</b>; 10 minutes, <b>{{ start_info['10 min'] }} bikes</b>;<br> 15 minutes, <b>{{ start_info['15 min'] }} bikes</b>; and 20 minutes, <b>{{ start_info['20 min'] }} bikes</b></p>
+
+        <p>Recommended end station: <b>{{ end_info['name'] }}</b><br>  There are currently <b>{{ end_info['0 min'] }} docks</b> there. In 30 minutes, I predict there will be <b>{{ end_info['30 min'] }} docks</b>;<br> 45 minutes, <b>{{ end_info['45 min'] }} docks</b>;  and 60 minutes <b>{{ end_info['60 min'] }} docks</b></p>
     </div>
     {{ div | safe }} 
 
