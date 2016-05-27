@@ -8,21 +8,184 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <link
-    href="http://cdn.pydata.org/bokeh/release/bokeh-0.10.0.min.css"
-    rel="stylesheet" type="text/css">
-    <script src="http://cdn.pydata.org/bokeh/release/bokeh-0.10.0.min.js"></script>
-    {{ script | safe }}
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <style type="text/css">
+      #startmap
+      {
+          width: 400px;
+          height: 400px;
+          min-height: 100%;
+          min-width: 100%;
+          display: block;
+      }
+
+      #endmap
+      {
+          width: 400px;
+          height: 400px;
+          min-height: 100%;
+          min-width: 100%;
+          display: block;
+      }
+
+      html, body
+      {
+          height: 100%;
+      }
+      
+      .fill
+      {
+          min-height: 100%;
+          height: 100%;
+          width: 100%;
+          min-width: 100%;
+      }
+
+      #wrap {
+         width:900px;
+         height:550px;
+         margin:0 auto;
+      }
+      #left_col {
+         float:left;
+         width:400px;
+         margin:25px;
+      }
+      #right_col {
+         float:right;
+         width:400px;
+         margin:25px;
+      }
+  </style>
   </head>
   <body>
     <div>
-        <p>Here are the start and end locations you requested, along with recommended stations in <b>black</b>. Other stations, with the current amount of bikes/docks, are shown in <font color='red'><b>red</b></font>.
-        <p>Recommended start station: <b>{{ start_info['name'] }}</b><br>  There are currently <b>{{ start_info['0 min'] }} bikes</b> there. In 5 minutes, I predict there will be <b>{{ start_info['5 min'] }} bikes</b>; 10 minutes, <b>{{ start_info['10 min'] }} bikes</b>;<br> 15 minutes, <b>{{ start_info['15 min'] }} bikes</b>; and 20 minutes, <b>{{ start_info['20 min'] }} bikes</b></p>
-
-        <p>Recommended end station: <b>{{ end_info['name'] }}</b><br>  There are currently <b>{{ end_info['0 min'] }} docks</b> there. In 30 minutes, I predict there will be <b>{{ end_info['30 min'] }} docks</b>;<br> 45 minutes, <b>{{ end_info['45 min'] }} docks</b>;  and 60 minutes <b>{{ end_info['60 min'] }} docks</b></p>
+      <p>Here are the start and end locations you requested (in <font color='grey'><b>grey</b></font>), along with recommended stations in <b>black</b>. Other stations, are shown in <font color='red'><b>red</b></font>. Clicking on each station will show you the current and predicted numbers of bikes.</p>
     </div>
-    {{ div | safe }} 
+    <div>
+        <div id="wrap">
+          <div id="left_col">
+            <div style="text-align:center">Start location</div>
+            <div id="startmap"></div>
+            <div id = "startpredictions">Waiting for predictions...</div> 
+          </div>
+          <div id="right_col">
+            <div style="text-align:center">End location</div>
+            <div id="endmap"></div>
+            <div id="endpredictions">Waiting for predictions...</div> 
+          </div>
+        </div>
+        <p style="text-align:center">
+          <img src="/static/powered_by_google_on_white_hdpi.png" alt="google" height = "30">
+        </p>
+    </div>
 
+    <script>
+    function onEachFeature(feature, layer) {
+      // does this feature have a property named popupContent?
+      if (feature.properties && feature.properties.popupContent) {
+        layer.bindPopup(feature.properties.popupContent);
+      }
+    }
+    var smap = d3.json('start_loc.json', function(data) {
+        var startmap = L.map('startmap').setView([data[0], data[1]], 16);
+        // load a tile layer
+        var Hydda_Full = L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
+                                      attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/"target="_blank">OpenStreetMap Sweden</a> &mdash; Map data  &copy; <a href="http://www.openstreetmap.org/copyright"> OpenStreetMap</a>'
+        }).addTo(startmap);
+        var geojsonFeature = {
+          "type": "Feature",
+          "properties": {
+            "name": "Start point",
+            "popupContent": "Start point"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [data[1], data[0]]
+          }
+        };
+        var geojsonMarkerOptions = {
+          radius: 8,
+          fillColor: "grey",
+          color: "#000",
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+        };
+        L.geoJson(geojsonFeature, {
+          onEachFeature: onEachFeature,
+          pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, geojsonMarkerOptions);
+          }
+        }).addTo(startmap)
+        var spred = d3.json('start_predictions.json', function(data) {
+          var geojsons = data[1]
+          for(var i=0; i < geojsons.length; i++) {
+              sfeature = geojsons[i][0]
+              geojsonMarkerOptions = geojsons[i][1]
+              L.geoJson(sfeature, {
+                onEachFeature: onEachFeature,
+                pointToLayer: function (feature, latlng) {
+                  return L.circleMarker(latlng, geojsonMarkerOptions);
+                }
+              }).addTo(startmap);
+            };
+          d3.select("#startpredictions")
+            .text(data[0]);
+        })
+
+    });
+    var emap = d3.json('end_loc.json', function(data) {
+        var endmap = L.map('endmap').setView([data[0], data[1]], 16);
+        // load a tile layer
+        var Hydda_Full = L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
+                                      attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/"target="_blank">OpenStreetMap Sweden</a> &mdash; Map data  &copy; <a href="http://www.openstreetmap.org/copyright"> OpenStreetMap</a>'
+        }).addTo(endmap);
+        var geojsonFeature = {
+          "type": "Feature",
+          "properties": {
+            "name": "End point",
+            "popupContent": "End point"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [data[1], data[0]]
+          }
+        };
+        var geojsonMarkerOptions = {
+          radius: 8,
+          fillColor: "grey",
+          color: "#000",
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+        };
+        L.geoJson(geojsonFeature, {
+          onEachFeature: onEachFeature,
+          pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, geojsonMarkerOptions);
+          }
+        }).addTo(endmap)
+        var epred = d3.json('end_predictions.json', function(data) {
+          var geojsons = data[1]
+          for(var i=0; i < geojsons.length; i++) {
+            sfeature = geojsons[i][0]
+            geojsonMarkerOptions = geojsons[i][1]
+            L.geoJson(sfeature, {
+              onEachFeature: onEachFeature,
+              pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, geojsonMarkerOptions);
+              }
+            }).addTo(endmap);
+            
+          }
+          d3.select("#endpredictions")
+            .text(data[0]);
+        })
+    });
+    </script>
   </body>
 </html>
 {% endblock %}
